@@ -26,7 +26,7 @@ bool validar_digito_id(int digito_id[8]) {
     return calculo_digito_id == digito_id[7];
 }
 
-// Função para converter os 4 primeiros números usando a tabela LCode
+// Funï¿½ï¿½o para converter os 4 primeiros nÃºmeros usando a tabela LCode
 void converter_LCode(int numero, char binario[8]) {
     const char *tabela_binaria[10] = {
         "0001101", // 0
@@ -44,7 +44,7 @@ void converter_LCode(int numero, char binario[8]) {
     strcpy(binario, tabela_binaria[numero]); // Copia a string da tabela
 }
 
-// Função para converter os 4 últimos números usando a tabela RCode
+// FunÃ§Ã£o para converter os 4 Ãºltimos nÃºmeros usando a tabela RCode
 void converter_RCode(int numero, char binario[8]) {
     const char *tabela_binaria[10] = {
         "1110010", // 0
@@ -62,17 +62,17 @@ void converter_RCode(int numero, char binario[8]) {
     strcpy(binario, tabela_binaria[numero]); // Copia a string da tabela
 }
 
-//função para gerar a sequencia do código de barras
+//funÃ§Ã£o para gerar a sequencia do cÃ³digo de barras
 void sequencia_ean8(int digito_id[8], char *sequencia){
     int i;
 
     //adiciona o marcador inicial
     strcat(sequencia, "101");
 
-    //adicionando os 4 primeiros dígitos em LCode para a string sequencia
+    //adicionando os 4 primeiros dÃ­gitos em LCode para a string sequencia
     for (i=0;i<4;i++){
         char numeros_binarios[8];
-        //convertendo os dígitos para LCode e add em numeros_binarios
+        //convertendo os dÃ­gitos para LCode e add em numeros_binarios
         converter_LCode(digito_id[i], numeros_binarios);
         //add de numeros_binarios para a string sequencia
         strcat(sequencia, numeros_binarios);
@@ -81,7 +81,7 @@ void sequencia_ean8(int digito_id[8], char *sequencia){
     //marcador central
     strcat(sequencia, "01010");
 
-    //adicionando os 4 ultimos dígitos em RCode para a string sequencia
+    //adicionando os 4 ultimos dÃ­gitos em RCode para a string sequencia
     for(i=0;i<4;i++){
         char numeros_binarios[8];
         converter_RCode(digito_id[i+4], numeros_binarios);
@@ -103,10 +103,10 @@ int main(int argc, char *argv[]) {
     int digito_id[8];
     char LCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
     char RCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
-    char sequencia[100] = ""; //string para a função sequencia_ean8
+    char sequencia[100] = ""; //string para a funÃ§Ã£o sequencia_ean8
     int i;
 
-    //valores padrão
+    //valores padrÃ£o
     int espaco_lateral = 10;
     int pixels_por_area = 1;
     int altura = 50;
@@ -119,61 +119,64 @@ int main(int argc, char *argv[]) {
     if (argc > 5) strncpy(nome_da_imagem, argv[5], 50);
 
     if (strlen(entrada) != 8) {
-        printf("Você deve inserir exatamente 8 dígitos!\n");
+        printf("Voce deve inserir exatamente 8 digitos!\n");
         return 1;
     }
 
     for (i = 0; i < 8; i++) {
         if (entrada[i] < '0' || entrada[i] > '9') {
-            printf("Você deve digitar apenas números!\n");
+            printf("Voce deve digitar apenas numeros!\n");
             return 1;
         }
         // Troca char por int
         digito_id[i] = entrada[i] - '0';
     }
 
-    // Conversão dos 4 primeiros números usando a tabela fornecida
+    // ConversÃ£o dos 4 primeiros nÃºmeros usando a tabela fornecida
     for (i = 0; i < 4; i++) {
         memset(LCode[i], 0, sizeof(LCode[i])); // Zera o buffer
         converter_LCode(digito_id[i], LCode[i]);
     }
 
-    // Conversão dos 4 últimos números usando a tabela fornecida
+    // ConversÃ£o dos 4 Ãºltimos nÃºmeros usando a tabela fornecida
     for (i = 0; i < 4; i++) {
         memset(RCode[i], 0, sizeof(RCode[i])); // Zera o buffer
         converter_RCode(digito_id[i + 4], RCode[i]);
     }
 
-    // Exibe os resultados em binário (LCode)
-    printf("Os primeiros 4 dígitos em binário (LCode):\n");
+    // Exibe os resultados em binÃ¡rio (LCode)
+    printf("Os primeiros 4 digitos em binario (LCode):\n");
     for (i = 0; i < 4; i++) {
         printf("%s ", LCode[i]);
     }
     printf("\n");
 
-    // Exibe os resultados em binário (RCode)
-    printf("Os últimos 4 dígitos em binário (RCode):\n");
+    // Exibe os resultados em binÃ¡rio (RCode)
+    printf("Os ultimos 4 digitos em binario (RCode):\n");
     for (i = 0; i < 4; i++) {
-        printf("%s ", RCode[i]); // Cada elemento de RCode é exibido exatamente uma vez
+        printf("%s ", RCode[i]); // Cada elemento de RCode Ã© exibido exatamente uma vez
     }
     printf("\n");
 
-    //mostrando a sequencia do código de barras
-    sequencia_ean8(digito_id, sequencia);
-    printf("Sequência do código de barras: %s\n", sequencia);
-
-    // Dizendo qual o dígito verificador
-    printf("O dígito verificador é %d\n", calculo_digito_verificador(digito_id));
-
-    // Testando
-    if (validar_digito_id(digito_id)) {
-        printf("Dígito Verificador Válido\n");
-    } else {
-        printf("Dígito Verificador Inválido\n");
+    // Testando para saber se o dÃ­gito id Ã© vÃ¡lido ou nÃ£o
+    if (!validar_digito_id(digito_id)) {
+    printf("Erro: O digito verificador fornecido (%d) e invalido.\n", digito_id[7]);
+    return 1;
+    }
+    else{
+        printf("Digito Verificador Valido"); 
     }
 
-    //Exibir informações adicionais
-    printf("espaço latera: %d\n", espaco_lateral);
+    //mostrando a sequencia do cÃ³digo de barras
+    sequencia_ean8(digito_id, sequencia);
+    printf("Sequencia do codigo de barras: %s\n", sequencia);
+
+    // Dizendo qual o dÃ­gito verificador
+    printf("Digito verificador: %d\n", calculo_digito_verificador(digito_id));
+
+   
+    //Exibir informaÃ§Ãµes adicionais
+    printf("espaco lateral: %d\n", espaco_lateral);
     printf("pixels p area: %d\n", pixels_por_area);
     printf("altura: %d\n", altura);
     printf("nome da imagem: %s\n", nome_da_imagem);
