@@ -1,7 +1,7 @@
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 
 int calculo_digito_verificador(int digito_id[7]) {
     int soma = 0;
@@ -84,7 +84,7 @@ void sequencia_ean8(int digito_id[8], char *sequencia){
     //adicionando os 4 ultimos dígitos em RCode para a string sequencia
     for(i=0;i<4;i++){
         char numeros_binarios[8];
-        converter_RCode(digito_id[i], numeros_binarios);
+        converter_RCode(digito_id[i+4], numeros_binarios);
         strcat(sequencia, numeros_binarios);
     }
 
@@ -93,25 +93,35 @@ void sequencia_ean8(int digito_id[8], char *sequencia){
 
 }
 
-
-int main() {
-    int digito_id[8];
-    char entrada[9];
-    char LCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
-    char RCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
-    char sequencia [100] = ""; //string para a função sequencia_ean8
-    int i;
-
-    printf("Digite os 8 dígitos: ");
-    scanf("%8s", entrada);
-
-    if (strlen(entrada) != 8) {
-        printf("Você deve inserir apenas 8 dígitos!\n");
+int main(int argc, char *argv[]) {
+    if (argc < 2 || argc > 6) {
+        printf("Uso: %s <8-digitos> [espacamento_lateral] [pixels_por_area] [altura] [nome_da_imagem.pbm]\n", argv[0]);
         return 1;
     }
 
-    // Limpa buffer
-    while (getchar() != '\n');
+    char *entrada = argv[1];
+    int digito_id[8];
+    char LCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
+    char RCode[4][8]; // Tamanho ajustado para armazenar 7 bits + '\0'
+    char sequencia[100] = ""; //string para a função sequencia_ean8
+    int i;
+
+    //valores padrão
+    int espaco_lateral = 10;
+    int pixels_por_area = 1;
+    int altura = 50;
+    char nome_da_imagem[50] = "codigo_barra.pbm";
+
+    // Atualizar os valores se forem fornecidos
+    if (argc > 2) espaco_lateral = atoi(argv[2]);
+    if (argc > 3) pixels_por_area = atoi(argv[3]);
+    if (argc > 4) altura = atoi(argv[4]);
+    if (argc > 5) strncpy(nome_da_imagem, argv[5], 50);
+
+    if (strlen(entrada) != 8) {
+        printf("Você deve inserir exatamente 8 dígitos!\n");
+        return 1;
+    }
 
     for (i = 0; i < 8; i++) {
         if (entrada[i] < '0' || entrada[i] > '9') {
@@ -152,7 +162,6 @@ int main() {
     sequencia_ean8(digito_id, sequencia);
     printf("Sequência do código de barras: %s\n", sequencia);
 
-
     // Dizendo qual o dígito verificador
     printf("O dígito verificador é %d\n", calculo_digito_verificador(digito_id));
 
@@ -162,6 +171,12 @@ int main() {
     } else {
         printf("Dígito Verificador Inválido\n");
     }
+
+    //Exibir informações adicionais
+    printf("espaço latera: %d\n", espaco_lateral);
+    printf("pixels p area: %d\n", pixels_por_area);
+    printf("altura: %d\n", altura);
+    printf("nome da imagem: %s\n", nome_da_imagem);
 
     return 0;
 }
