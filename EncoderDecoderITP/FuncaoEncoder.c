@@ -93,6 +93,50 @@ void sequencia_ean8(int digito_id[8], char *sequencia){
 
 }
 
+//função para gerar PBM
+void gerar_pbm(const char *sequencia, int largura_area, int altura, int espaco_lateral, const char *nome_arquivo){
+
+    //calculo para a largura geral da img
+    int largura_codigo = strlen(sequencia) * largura_area;
+    //soma +2 pois o espaçamento é dos dois lados
+    int largura_total = largura_codigo + 2 * espaco_lateral; 
+    int altura_total = altura; 
+
+    FILE *arquivo = fopen(nome_arquivo, "w");
+    if(!arquivo){
+        printf("Erro ao abrir o arquivo '%s' para escrita\n", nome_arquivo);
+        return; 
+    }
+
+    fprintf(arquivo, "P1\n");
+    fprintf(arquivo, "%d %d\n", largura_total, altura_total);
+
+    // Gerar a imagem pixel por pixel
+    for (int y = 0; y < altura_total; y++) {
+        for (int x = 0; x < largura_total; x++) {
+            if (x < espaco_lateral || x >= largura_total - espaco_lateral) {
+                // Espaçamento lateral (pixels brancos)
+                fprintf(arquivo, "0 ");
+            } else {
+                // Determinar a posição na sequência
+                int posicao_codigo = (x - espaco_lateral) / largura_area;
+                if (sequencia[posicao_codigo] == '1') {
+                    fprintf(arquivo, "1 "); // Barra preta
+                } else {
+                    fprintf(arquivo, "0 "); // Espaço branco
+                }
+            }
+        }
+        fprintf(arquivo, "\n"); // Nova linha após cada linha de altura
+    }
+
+    fclose(arquivo);
+    printf("Arquivo PBM\n", nome_arquivo);
+
+
+
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 2 || argc > 6) {
         printf("Uso: %s <8-digitos> [espacamento_lateral] [pixels_por_area] [altura] [nome_da_imagem.pbm]\n", argv[0]);
@@ -164,7 +208,7 @@ int main(int argc, char *argv[]) {
     return 1;
     }
     else{
-        printf("Digito Verificador Valido"); 
+        printf("Digito Verificador Valido\n"); 
     }
 
     //mostrando a sequencia do código de barras
@@ -180,6 +224,9 @@ int main(int argc, char *argv[]) {
     printf("pixels p area: %d\n", pixels_por_area);
     printf("altura: %d\n", altura);
     printf("nome da imagem: %s\n", nome_da_imagem);
+
+    //gerando o arquivo PBM
+    gerar_pbm(sequencia, pixels_por_area, altura, espaco_lateral, nome_da_imagem);
 
     return 0;
 }
