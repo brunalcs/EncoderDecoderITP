@@ -21,9 +21,9 @@ int calculo_digito_verificador(int digito_id[7]) {
 }
 
 bool validar_digito_id(int digito_id[8]) {
-    int calculo_digito_id = calculo_digito_verificador(digito_id);
+    int calculo_digito = calculo_digito_verificador(digito_id);
 
-    return calculo_digito_id == digito_id[7];
+    return calculo_digito == digito_id[7];
 }
 
 // Fun��o para converter os 4 primeiros números usando a tabela LCode
